@@ -1,0 +1,7 @@
+__pycache__/
+venv/
+.idea/
+data/
+runs/
+experiments/
+old_read.md

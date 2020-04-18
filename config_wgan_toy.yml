@@ -1,0 +1,14 @@
+workers: 6
+display: 5
+epoches: 20
+batch_size: 256
+base_lr: 0.0002
+beta1: 0.5
+
+dataset: 'toy'
+image_size: 64
+z_size: 2
+channel_size: 1
+DIM: 512
+critic_iters: 5
+LAMBDA: .1

@@ -1,0 +1,1 @@
+find ./experiments -type d -empty -delete
