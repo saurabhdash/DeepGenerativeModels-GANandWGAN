@@ -428,7 +428,7 @@ def get_data(args, config):
 
     elif config.dataset == 'celebA':
         train_loader = torch.utils.data.DataLoader(
-            MydataFolder(traindir,
+            MyDataset(traindir,
                          transform=transforms.Compose([transforms.Scale(config.image_size),
                                                        transforms.ToTensor(),
                                                        transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)),
