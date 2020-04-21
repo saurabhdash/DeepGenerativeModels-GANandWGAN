@@ -296,8 +296,14 @@ class gan(nn.Module):
         image_size = self.config.image_size
         is_gray = self.config.channel_size == 1
         self.G.eval()
+        noise = torch.FloatTensor(8 * 8, self.config.z_size, 1, 1).normal_(0, 1)
+        # print(noise.shape)
+        # m = torch.distributions.bernoulli.Bernoulli(torch.tensor([1.0]))
+        # noise = m.sample(noise.shape).squeeze(4)
+        # print(noise[0,:,:,:])
+        # print(noise.shape)
         with torch.no_grad():
-            generate_images = self.G(torch.FloatTensor(8 * 8, self.config.z_size, 1, 1).normal_(0, 1))
+            generate_images = self.G(noise)
 
         n_rows = n_cols = 8
         fig, axes = plt.subplots(n_rows, n_cols, figsize=fig_size)
@@ -321,7 +327,7 @@ class gan(nn.Module):
 
     def generate(self, modelpath, n):
         self.G = load_checkpoint(self.G, modelpath)
-        # fig_size = (8, 8)
+        fig_size = (8, 8)
         image_size = self.config.image_size
         is_gray = self.config.channel_size == 1
         self.G.eval()
@@ -334,6 +340,38 @@ class gan(nn.Module):
                 img = img.cpu().data.view(image_size, image_size).numpy()
             else:
                 img = (((img - img.min()) * 255) / (img.max() - img.min())).cpu().data.numpy().transpose(1, 2, 0).astype(np.uint8)
+
+        noise_seed = noise
+        noise = torch.zeros(10*11, self.config.z_size, 1, 1)
+        idx = 0
+        for j in range(10):
+            for i in range(11):
+                temp = noise_seed
+                noise[idx] = temp + (i-5)*noise_seed[0,j,0,0]*(0.1)
+                print(idx)
+                idx += 1
+
+
+        generate_images = self.G(noise)
+
+
+        fig, axes = plt.subplots(10, 11, figsize=fig_size)
+
+        for ax, img in zip(axes.flatten(), generate_images):
+            ax.axis('off')
+            # ax.set_adjustable('box-forced')
+            if is_gray:
+                img = img.cpu().data.view(image_size, image_size).numpy()
+                ax.imshow(img, cmap='gray', aspect='equal')
+            else:
+                img = (((img - img.min()) * 255) / (img.max() - img.min())).cpu().data.numpy().transpose(1, 2,
+                                                                                                         0).astype(
+                    np.uint8)
+                ax.imshow(img, cmap=None, aspect='equal')
+        plt.subplots_adjust(wspace=0, hspace=0)
+        title = ' '
+        fig.text(0.5, 0.04, title, ha='center')
+        plt.show()
 
         # print(type(generate_images))
         # print(generate_images.shape)
@@ -414,31 +452,6 @@ def construct_model(config):
     print(D)
     return(G, D)
 
-def get_data(args, config):
-    traindir = args.train_dir
-    if config.dataset == 'mnist':
-        train_loader = torch.utils.data.DataLoader(
-            datasets.MNIST(traindir, True,
-                           transforms.Compose([transforms.Scale(config.image_size),
-                                               transforms.ToTensor(),
-                                               transforms.Normalize(mean=(0.5,), std=(0.5,)),
-                                               ]), download=True),
-            batch_size=config.batch_size, shuffle=True,
-            num_workers=config.workers, pin_memory=True)
-
-    elif config.dataset == 'celebA':
-        train_loader = torch.utils.data.DataLoader(
-            MyDataset(traindir,
-                         transform=transforms.Compose([transforms.Scale(config.image_size),
-                                                       transforms.ToTensor(),
-                                                       transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)),
-                                                       ])),
-            batch_size=config.batch_size, shuffle=True,
-            num_workers=config.workers, pin_memory=True)
-    else:
-        NotImplementedError()
-
-    return train_loader
 
 
 

@@ -5,13 +5,12 @@ batch_size: 128
 base_lr: 0.0002
 beta1: 0.5
 
-dataset: 'celebA'
+dataset: 'mnist'
 image_size: 64
 z_size: 10
-channel_size: 3
+channel_size: 1
 ngf: 128
 ndf: 128
-
 #-------------lr_policy--------------------#
 # step
 #lr_policy: 'step'

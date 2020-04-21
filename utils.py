@@ -82,7 +82,7 @@ class MydataFolder(data.Dataset):
             index (int): index
     
         Returns:
-            tuple: (image, label) where label is the clas of the image
+            tuple: (image, label) where label is the class of the image
         """
     
         path, label = self.lists[index]
@@ -292,7 +292,7 @@ class MyDataset(data.Dataset):
         self.list = []
         for root, dirs, files in os.walk(self.folder):
             for name in files:
-                print(os.path.join(root, name))
+                # print(os.path.join(root, name))
                 self.list.append(os.path.join(root, name))
 
 
@@ -307,3 +307,30 @@ class MyDataset(data.Dataset):
 
     def __len__(self):
         return len(self.list)
+
+
+def get_data(args, config):
+    traindir = args.train_dir
+    if config.dataset == 'mnist':
+        train_loader = torch.utils.data.DataLoader(
+            datasets.MNIST(traindir, True,
+                           transforms.Compose([transforms.Resize(config.image_size),
+                                               transforms.ToTensor(),
+                                               transforms.Normalize(mean=(0.5,), std=(0.5,)),
+                                               ]), download=True),
+            batch_size=config.batch_size, shuffle=True,
+            num_workers=config.workers, pin_memory=True)
+
+    elif config.dataset == 'celebA':
+        train_loader = torch.utils.data.DataLoader(
+            MyDataset(traindir,
+                         transform=transforms.Compose([transforms.Resize((config.image_size, config.image_size)),
+                                                       transforms.ToTensor(),
+                                                       transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)),
+                                                       ])),
+            batch_size=config.batch_size, shuffle=True,
+            num_workers=config.workers, pin_memory=True)
+    else:
+        NotImplementedError()
+
+    return train_loader

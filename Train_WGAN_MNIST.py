@@ -15,7 +15,7 @@ def parse():
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', type=str,
-                        dest='config', default = 'config_wgan.yml', help='to set the parameters')
+                        dest='config', default = 'config_wgan_mnist.yml', help='to set the parameters')
     parser.add_argument('--gpu', default=[0], nargs='+', type=int,
                         dest='gpu', help='the gpu used')
     parser.add_argument('--pretrained', default=None,type=str,
@@ -23,7 +23,7 @@ def parse():
     parser.add_argument('--root', default=None, type=str,
                         dest='root', help='the root of images')
     parser.add_argument('--train_dir', type=str,
-                        dest='train_dir', default = './data', help='the path of train file')
+                        dest='train_dir', default = './data/', help='the path of train file')
     parser.add_argument('--save_dir', default='./experiments/MNIST/WGAN', type=str,
                         dest='save_dir', help='the path of save generate images')
 

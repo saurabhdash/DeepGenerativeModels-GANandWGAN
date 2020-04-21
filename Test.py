@@ -8,8 +8,8 @@ def parse():
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', type=str,
-                        dest='config', default = 'config.yml', help='to set the parameters')
-    parser.add_argument('--loadfile', default='./experiments/2020-04-10_23-58-01/chkpt/G_epoch_19.pth.tar', type=str,
+                        dest='config', default = 'config_gan_celeba.yml', help='to set the parameters')
+    parser.add_argument('--loadfile', default='./experiments/CelebA/GAN/2020-04-19_02-40-02/chkpt/G_epoch_19.pth.tar', type=str,
                         dest='loadfile', help='the path of G model to be loaded')
 
     return parser.parse_args()
@@ -25,14 +25,16 @@ def construct_model(config):
     return(G, D)
 
 def main():
-    #
+    torch.manual_seed(1)
     args = parse()
     config = Config(args.config)
     G, _ = construct_model(config)
     # train_loader = get_data(args, config)
     # train_net(G, D, args, config)
     GAN = gan(G, _, config, args, _)
-    GAN.interpolate(args.loadfile)
+    for _ in range(10):
+        noise, image = GAN.generate(args.loadfile,1)
+
     print('hi')
 
 

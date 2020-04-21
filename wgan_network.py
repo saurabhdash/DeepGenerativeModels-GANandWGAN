@@ -462,35 +462,3 @@ def construct_model(config):
     return (G, D)
 
 
-def get_data(args, config):
-    traindir = args.train_dir
-    if config.dataset == 'mnist':
-        train_loader = torch.utils.data.DataLoader(
-            datasets.MNIST(traindir, True,
-                           transforms.Compose([transforms.Scale(config.image_size),
-                                               transforms.ToTensor(),
-                                               transforms.Normalize(mean=(0.5,), std=(0.5,)),
-                                               ]), download=True),
-            batch_size=config.batch_size, shuffle=True,
-            num_workers=config.workers, pin_memory=True)
-
-    elif config.dataset == 'celebA':
-        train_loader = torch.utils.data.DataLoader(
-            MydataFolder(traindir,
-                         transform=transforms.Compose([transforms.Scale(config.image_size),
-                                                       transforms.ToTensor(),
-                                                       transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)),
-                                                       ])),
-            batch_size=config.batch_size, shuffle=True,
-            num_workers=config.workers, pin_memory=True)
-    else:
-        NotImplementedError()
-
-    return train_loader
-
-
-
-
-
-
-
